@@ -8,7 +8,7 @@ class Element:
         if Element.__compare == None:
             Element.__compare = compare
 
-    def __lt__(self, other: Element):
+    def __lt__(self, other):
         # to create max heap
         return not Element.__compare(self.element, other.element)
 
@@ -19,10 +19,15 @@ class PQ:
         self.__current = 0
 
     def push_back(self, element):
-        heapq.heappush(self.queue, Element(element, self.__compare))
+        heapq.heappush(self.__queue, Element(element, self.__compare))
 
     def pop_back(self):
         heapq.heappop(self.__queue)
+
+    def remove(self, element):
+        tmp_element = Element(element)
+        self.__queue.remove(tmp_element)
+        heapq.heapify(self.__queue)
 
     def __len__(self):
         return len(self.__queue)
