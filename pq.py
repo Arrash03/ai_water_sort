@@ -16,6 +16,7 @@ class PQ:
     def __init__(self, compare):
         self.__queue = []
         self.__compare = compare
+        self.__current = 0
 
     def push_back(self, element):
         heapq.heappush(self.queue, Element(element, self.__compare))
@@ -25,3 +26,14 @@ class PQ:
 
     def __len__(self):
         return len(self.__queue)
+
+    def __iter__(self):
+        return self.__queue
+
+    def __next__(self):
+        if self.__current < (len(self.__queue) - 1):
+            next = self.__current
+            self.__current += 1
+            return next
+        else:
+            raise StopIteration
