@@ -34,6 +34,6 @@ class PQ:
         if self.__current < (len(self.__queue) - 1):
             next = self.__current
             self.__current += 1
-            return next
+            return self.__queue[next]
         else:
             raise StopIteration
