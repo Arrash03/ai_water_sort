@@ -115,7 +115,6 @@ class GameSolution:
                 depth *= 2
             else:
                 break
-        print("a")
 
     def optimal_solve(self, current_state):
         """
