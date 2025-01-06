@@ -11,6 +11,9 @@ class GameSolution:
     MotherTube = List[Tube]
     Move = List[List[int]]
     NodeState = Tuple[MotherTube, Tuple[int, int], Move]
+    NColorInTube=2
+    NEmptyTubes=1
+    NColor=3
     """
         A class for solving the Water Sort game and finding solutions(normal, optimal).
 
@@ -28,21 +31,22 @@ class GameSolution:
                 Find an optimal solution to the Water Sort game from the current state.
                 After finding solution, please set (self.solution_found) to True and fill (self.moves) list.
     """
-    def __init__(self, game):
+    def __init__(self):
         """
             Initialize a GameSolution instance.
             Args:
                 game (Game): An instance of the Water Sort game.
         """
-        self.ws_game = game  # An instance of the Water Sort game.
+        # self.ws_game = game  # An instance of the Water Sort game.
         self.moves = []  # A list of tuples representing moves between source and destination tubes.
-        self.tube_numbers = game.NEmptyTubes + game.NColor  # Number of tubes in the game.
+        self.tube_numbers = GameSolution.NEmptyTubes + GameSolution.NColor  # Number of tubes in the game.
         self.solution_found = False  # True if a solution is found, False otherwise.
         self.visited_tubes = set()  # A set of visited tubes.
+        self.own_state = []
 
     def __is_tube_completed(self, tube: Tube) -> bool:
         result = False
-        if len(tube) == self.ws_game.NColorInTube:
+        if len(tube) == GameSolution.NColorInTube:
             tmp_set = set(tube)
             if len(tmp_set) == 1:
                 result = True
@@ -59,7 +63,7 @@ class GameSolution:
     def __find_destinations(self, tubes: MotherTube) -> List[int]:
         destinations: List[int] = []
         for i in range(len(tubes)):
-            if len(tubes[i]) != self.ws_game.NColorInTube:
+            if len(tubes[i]) != GameSolution.NColorInTube:
                 destinations.append(i)
         return destinations
 
@@ -74,7 +78,7 @@ class GameSolution:
             result = False
         else:
             for tube in tubes:
-                if len(tube) != 0 and len(tube) != self.ws_game.NColorInTube:
+                if len(tube) != 0 and len(tube) != GameSolution.NColorInTube:
                     result = False
                     break
                 tmp_set = set(tube)
@@ -110,13 +114,14 @@ class GameSolution:
                     if self.__check_win(own_current_state):
                         self.solution_found = True
                         self.moves = own_moves
+                        self.own_state = own_current_state
                         return True 
                     result = self.solve(own_current_state, own_moves, depth - 1)
                     if result:
                         return True
 
             if depth == GameSolution.MAX_DEPTH:
-                depth *= 2
+                depth += 4
             else:
                 break
 
@@ -138,21 +143,7 @@ class GameSolution:
         # if ncolor is alwas 2
         completed_tubes = self.__count_completed_tubes(tubes)
         return len(tubes) - completed_tubes - 1
-        # if not self.__check_win(tubes):
-        #     match completed_tubes:
-        #         case len(tubes) - 1:
-        #             result = 0
-        #         case len(tubes) - 2:
-        #             result = 1
-        #         case len(result) - 3:
-        #             result = 2
-        #         case len(result) - 4:
-        #             result = 3
-        #     if len(tubes) - 2 == completed_tubes:
-        #         result = 1
-        # return result
         
-
     def optimal_solve(self, current_state: MotherTube):
         """
             Find an optimal solution to the Water Sort game from the current state.
@@ -163,11 +154,6 @@ class GameSolution:
             This method attempts to find an optimal solution to the Water Sort game by minimizing
             the number of moves required to complete the game, starting from the current state.
         """
-        g_values: Dict[GameSolution.MotherTube, Tuple[int, int]] = {}
-        h_values: Dict[GameSolution.MotherTube, Tuple[int, int]] = {}
-
-        visited_states: Set[GameSolution.MotherTube]
-
         frontier: PQ = PQ(GameSolution.__f_compare)
         own_current_state = copy.deepcopy(current_state)
         current_h = self.__h(own_current_state)
@@ -194,6 +180,7 @@ class GameSolution:
                     if h_value == 0:
                         self.solution_found = True
                         self.moves = tmp_moves
+                        self.own_state = own_state
                         return
                     tmp_node: GameSolution.NodeState = [own_state, [closest[1][0] + 1, h_value], tmp_moves]
                     node_i = frontier.find(tmp_node)
