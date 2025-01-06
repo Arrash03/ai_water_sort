@@ -205,5 +205,3 @@ class GameSolution:
                             frontier.pop_back(node_i)
 
                     frontier.push_back(tmp_node)
-
-
