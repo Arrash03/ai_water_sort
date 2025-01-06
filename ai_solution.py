@@ -129,7 +129,7 @@ class GameSolution:
     def __f_compare(prev: NodeState, next: NodeState) -> bool:
         prev_f = prev[1][0] + prev[1][1]
         next_f = next[1][0] + next[1][1]
-        return prev_f - next_f
+        return prev_f < next_f
 
     def __count_completed_tubes(self, tubes) -> int:
         count = 0

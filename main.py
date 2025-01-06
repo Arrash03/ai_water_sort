@@ -17,8 +17,8 @@ def create_tubes() -> GameSolution.MotherTube:
 
 if __name__ == "__main__":
     tubes = create_tubes()
+    print(f"initial state of tubes: {tubes}")
     solver = GameSolution()
-    print(tubes)
     solver.solve(tubes)
     optimal_solver = GameSolution()
     optimal_solver.optimal_solve(tubes)
